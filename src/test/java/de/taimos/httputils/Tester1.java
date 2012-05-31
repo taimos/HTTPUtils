@@ -1,5 +1,7 @@
 package de.taimos.httputils;
 
+import junit.framework.Assert;
+
 import org.apache.http.HttpResponse;
 import org.junit.Test;
 
@@ -15,7 +17,9 @@ public class Tester1 {
 	@Test
 	public void testGet() {
 		final HttpResponse response = WS.url("http://www.heise.de").get();
-		System.out.println("Status: " + WS.getStatus(response));
-		System.out.println(WS.getResponseAsString(response));
+		Assert.assertEquals(WS.getStatus(response), 200);
+		final String body = WS.getResponseAsString(response);
+		Assert.assertNotNull(body);
+		Assert.assertFalse(body.isEmpty());
 	}
 }
