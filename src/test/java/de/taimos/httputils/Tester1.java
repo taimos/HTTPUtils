@@ -1,8 +1,7 @@
 package de.taimos.httputils;
 
-import junit.framework.Assert;
-
 import org.apache.http.HttpResponse;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -21,5 +20,22 @@ public class Tester1 {
 		final String body = WS.getResponseAsString(response);
 		Assert.assertNotNull(body);
 		Assert.assertFalse(body.isEmpty());
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testBurnin() {
+		long time = System.nanoTime();
+		for (int i = 0; i < 100; i++) {
+			this.testGet();
+
+			// output system infos like call duration and memory consumption
+			final long duration = ((System.nanoTime() - time) / 1000000);
+			final long mem = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000;
+			System.out.println(duration + " ms with ram " + mem);
+			time = System.nanoTime();
+		}
 	}
 }
