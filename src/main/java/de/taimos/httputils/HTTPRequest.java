@@ -111,9 +111,15 @@ public class HTTPRequest {
 	private HttpResponse execute(HttpUriRequest req) {
 		try {
 			final HttpClient httpclient = new SystemDefaultHttpClient();
+			// if request has data populate body
 			if (req instanceof HttpEntityEnclosingRequestBase) {
 				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase)req;
 				entityBase.setEntity(new StringEntity(this.body, "UTF-8"));
+			}
+			// Set headers
+			final Set<Entry<String, String>> entrySet = this.headers.entrySet();
+			for (final Entry<String, String> entry : entrySet) {
+				req.addHeader(entry.getKey(), entry.getValue());
 			}
 
 			final HttpResponse response = httpclient.execute(req);
