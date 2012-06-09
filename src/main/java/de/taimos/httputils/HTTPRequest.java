@@ -21,7 +21,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.SystemDefaultHttpClient;
 
 /**
  * @author thoeger
@@ -110,7 +110,7 @@ public class HTTPRequest {
 
 	private HttpResponse execute(HttpUriRequest req) {
 		try {
-			final HttpClient httpclient = new DefaultHttpClient();
+			final HttpClient httpclient = new SystemDefaultHttpClient();
 			if (req instanceof HttpEntityEnclosingRequestBase) {
 				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase)req;
 				entityBase.setEntity(new StringEntity(this.body, "UTF-8"));
