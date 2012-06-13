@@ -31,7 +31,7 @@ public class HTTPRequest {
 
 	private final String url;
 
-	private final HashMap<String, String> headers = new HashMap<>();
+	private final HashMap<String, List<String>> headers = new HashMap<>();
 
 	private final HashMap<String, List<String>> queryParams = new HashMap<>();
 
@@ -52,7 +52,10 @@ public class HTTPRequest {
 	 * @return this
 	 */
 	public HTTPRequest header(String name, String value) {
-		this.headers.put(name, value);
+		if (!this.headers.containsKey(name)) {
+			this.headers.put(name, new ArrayList<String>());
+		}
+		this.headers.get(name).add(value);
 		return this;
 	}
 
@@ -70,11 +73,10 @@ public class HTTPRequest {
 				this.queryParams.put(name, new ArrayList<String>());
 			}
 			this.queryParams.get(name).add(encoded);
+			return this;
 		} catch (final UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-
-		return this;
 	}
 
 	/**
@@ -117,19 +119,21 @@ public class HTTPRequest {
 				entityBase.setEntity(new StringEntity(this.body, "UTF-8"));
 			}
 			// Set headers
-			final Set<Entry<String, String>> entrySet = this.headers.entrySet();
-			for (final Entry<String, String> entry : entrySet) {
-				req.addHeader(entry.getKey(), entry.getValue());
+			final Set<Entry<String, List<String>>> entrySet = this.headers.entrySet();
+			for (final Entry<String, List<String>> entry : entrySet) {
+				final List<String> list = entry.getValue();
+				for (final String string : list) {
+					req.addHeader(entry.getKey(), string);
+				}
 			}
 
 			final HttpResponse response = httpclient.execute(req);
 			return response;
 		} catch (final ClientProtocolException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (final IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		throw new RuntimeException();
 	}
 
 	private URI buildURI() {
@@ -145,9 +149,8 @@ public class HTTPRequest {
 			final URI uri = builder.build();
 			return uri;
 		} catch (final URISyntaxException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Invalid URI", e);
 		}
-		throw new RuntimeException("Invalid URI");
 	}
 
 }

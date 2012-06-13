@@ -1,0 +1,98 @@
+package de.taimos.httputils;
+
+/**
+ * @author thoeger
+ * 
+ */
+public interface WSConstants {
+
+	// Header names
+
+	/** Authentication credentials for HTTP authentication */
+	static final String HEADER_AUTHORIZATION = "Authorization";
+
+	/** Content-Types that are acceptable */
+	static final String HEADER_ACCEPT = "Accept";
+
+	/** Character sets that are acceptable */
+	static final String HEADER_ACCEPT_CHARSET = "Accept-Charset";
+
+	/** Acceptable encodings */
+	static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+
+	/** Acceptable languages for response */
+	static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+
+	/** What type of connection the user-agent would prefer */
+	static final String HEADER_CONNECTION = "Connection";
+
+	/** an HTTP cookie previously sent by the server with Set-Cookie */
+	static final String HEADER_COOKIE = "Cookie";
+
+	/** Used to specify directives that MUST be obeyed by all caching mechanisms along the request/response chain */
+	static final String HEADER_CACHE_CONTROL = "Cache-Control";
+
+	/** The length of the request body in octets (8-bit bytes) */
+	static final String HEADER_CONTENT_LENGTH = "Content-Length";
+
+	/** A Base64-encoded binary MD5 sum of the content of the request body */
+	static final String HEADER_CONTENT_MD5 = "Content-MD5";
+
+	/** The MIME type of the body of the request (used with POST and PUT requests) */
+	static final String HEADER_CONTENT_TYPE = "Content-Type";
+
+	/** The date and time that the message was sent */
+	static final String HEADER_DATE = "Date";
+
+	/** Indicates that particular server behaviors are required by the client */
+	static final String HEADER_EXPECT = "Expect";
+
+	/** The email address of the user making the request */
+	static final String HEADER_FROM = "From";
+
+	/** Only perform the action if the client supplied entity matches the same entity on the server */
+	static final String HEADER_IF_MATCH = "If-Match";
+
+	/** Allows a 304 Not Modified to be returned if content is unchanged */
+	static final String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
+
+	/** Allows a 304 Not Modified to be returned if content is unchanged */
+	static final String HEADER_IF_NONE_MATCH = "If-None-Match";
+
+	/** If the entity is unchanged, send me the part(s) that I am missing; otherwise, send me the entire new entity */
+	static final String HEADER_IF_Range = "If-Range";
+
+	/** Only send the response if the entity has not been modified since a specific time */
+	static final String HEADER_IF_UNMODIFIED_SINCE = "If-Unmodified-Since";
+
+	/** Limit the number of times the message can be forwarded through proxies or gateways */
+	static final String HEADER_MAX_FORWARDS = "Max-Forwards";
+
+	/** Implementation-specific headers that may have various effects anywhere along the request-response chain */
+	static final String HEADER_PRAGMA = "Pragma";
+
+	/** Authorization credentials for connecting to a proxy */
+	static final String HEADER_PROXY_AUTHORIZATION = "Proxy-Authorization";
+
+	/** Request only part of an entity. Bytes are numbered from 0. */
+	static final String HEADER_RANGE = "Range";
+
+	/** This is the address of the previous web page from which a link to the currently requested page was followed */
+	static final String HEADER_REFERER = "Referer";
+
+	/** The transfer encodings the user agent is willing to accept */
+	static final String HEADER_TARNSFER_ENCODING = "TE";
+
+	/** Ask the server to upgrade to another protocol */
+	static final String HEADER_UPGRADE = "Upgrade";
+
+	/** The user agent string of the user agent */
+	static final String HEADER_USER_AGENT = "User-Agent";
+
+	/** Informs the server of proxies through which the request was sent */
+	static final String HEADER_VIA = "Via";
+
+	/** A general warning about possible problems with the entity body */
+	static final String HEADER_WARNING = "Warning";
+
+}
