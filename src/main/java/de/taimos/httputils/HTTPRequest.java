@@ -1,10 +1,8 @@
 package de.taimos.httputils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,16 +65,11 @@ public class HTTPRequest {
 	 * @return this
 	 */
 	public HTTPRequest queryParam(String name, String value) {
-		try {
-			final String encoded = URLEncoder.encode(value, "UTF-8");
-			if (!this.queryParams.containsKey(name)) {
-				this.queryParams.put(name, new ArrayList<String>());
-			}
-			this.queryParams.get(name).add(encoded);
-			return this;
-		} catch (final UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+		if (!this.queryParams.containsKey(name)) {
+			this.queryParams.put(name, new ArrayList<String>());
 		}
+		this.queryParams.get(name).add(value);
+		return this;
 	}
 
 	/**
