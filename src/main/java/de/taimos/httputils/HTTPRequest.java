@@ -12,8 +12,10 @@ import java.util.Set;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -101,6 +103,20 @@ public class HTTPRequest {
 	 */
 	public HttpResponse post() {
 		return this.execute(new HttpPost(this.buildURI()));
+	}
+
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public HttpResponse delete() {
+		return this.execute(new HttpDelete(this.buildURI()));
+	}
+
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public HttpResponse options() {
+		return this.execute(new HttpOptions(this.buildURI()));
 	}
 
 	private HttpResponse execute(HttpUriRequest req) {
