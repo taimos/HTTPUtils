@@ -17,15 +17,16 @@ public class WS {
 	 *            the base URL
 	 * @return the created {@link HTTPRequest}
 	 */
-	public static HTTPRequest url(String url) {
+	public static HTTPRequest url(final String url) {
 		return new HTTPRequest(url);
 	}
 
 	/**
 	 * @param response
-	 * @return String
+	 *            the {@link HttpResponse}
+	 * @return String the body as UTF-8 string
 	 */
-	public static String getResponseAsString(HttpResponse response) {
+	public static String getResponseAsString(final HttpResponse response) {
 		try {
 			return EntityUtils.toString(response.getEntity(), "UTF-8");
 		} catch (final ParseException e) {
@@ -40,7 +41,7 @@ public class WS {
 	 * @param response
 	 * @return String
 	 */
-	public static int getStatus(HttpResponse response) {
+	public static int getStatus(final HttpResponse response) {
 		return response.getStatusLine().getStatusCode();
 	}
 }

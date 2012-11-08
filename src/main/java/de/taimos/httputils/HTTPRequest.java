@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -35,12 +36,12 @@ public class HTTPRequest {
 
 	private final HashMap<String, List<String>> queryParams = new HashMap<>();
 
-	private String body;
+	private String body = "";
 
 	/**
 	 * @param url
 	 */
-	public HTTPRequest(String url) {
+	public HTTPRequest(final String url) {
 		this.url = url;
 	}
 
@@ -51,7 +52,7 @@ public class HTTPRequest {
 	 *            the value of the header
 	 * @return this
 	 */
-	public HTTPRequest header(String name, String value) {
+	public HTTPRequest header(final String name, final String value) {
 		if (!this.headers.containsKey(name)) {
 			this.headers.put(name, new ArrayList<String>());
 		}
@@ -66,7 +67,7 @@ public class HTTPRequest {
 	 *            the value of the header
 	 * @return this
 	 */
-	public HTTPRequest queryParam(String name, String value) {
+	public HTTPRequest queryParam(final String name, final String value) {
 		if (!this.queryParams.containsKey(name)) {
 			this.queryParams.put(name, new ArrayList<String>());
 		}
@@ -74,12 +75,66 @@ public class HTTPRequest {
 		return this;
 	}
 
+	// #######################
+	// Some header shortcuts
+	// #######################
+
+	/**
+	 * @param type
+	 *            the Content-Type
+	 * @return this
+	 */
+	public HTTPRequest contentType(final String type) {
+		return this.header(WSConstants.HEADER_CONTENT_TYPE, type);
+	}
+
+	/**
+	 * @param authString
+	 *            the Authorization header
+	 * @return this
+	 */
+	public HTTPRequest auth(final String authString) {
+		return this.header(WSConstants.HEADER_AUTHORIZATION, authString);
+	}
+
+	/**
+	 * @param user
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @return this
+	 */
+	public HTTPRequest authBasic(final String user, final String password) {
+		final String credentials = user + ":" + password;
+		final String auth = Base64.encodeBase64String(credentials.getBytes());
+		return this.auth("Basic " + auth);
+	}
+
+	/**
+	 * @param accessToken
+	 *            the OAuth2 Bearer access token
+	 * @return this
+	 */
+	public HTTPRequest authBearer(final String accessToken) {
+		return this.auth("Bearer " + accessToken);
+	}
+
+	/**
+	 * @param type
+	 *            the Accept type
+	 * @return this
+	 */
+	public HTTPRequest accept(final String type) {
+		return this.header(WSConstants.HEADER_ACCEPT, type);
+	}
+
 	/**
 	 * @param body
 	 *            the body entity
 	 * @return this
 	 */
-	public HTTPRequest body(String body) {
+	@SuppressWarnings("hiding")
+	public HTTPRequest body(final String body) {
 		this.body = body;
 		return this;
 	}
@@ -119,12 +174,12 @@ public class HTTPRequest {
 		return this.execute(new HttpOptions(this.buildURI()));
 	}
 
-	private HttpResponse execute(HttpUriRequest req) {
+	private HttpResponse execute(final HttpUriRequest req) {
 		try {
 			final HttpClient httpclient = new SystemDefaultHttpClient();
 			// if request has data populate body
 			if (req instanceof HttpEntityEnclosingRequestBase) {
-				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase)req;
+				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase) req;
 				entityBase.setEntity(new StringEntity(this.body, "UTF-8"));
 			}
 			// Set headers
