@@ -10,7 +10,11 @@ import org.apache.http.util.EntityUtils;
  * @author thoeger
  * 
  */
-public class WS {
+public final class WS {
+
+	private WS() {
+		//
+	}
 
 	/**
 	 * @param url

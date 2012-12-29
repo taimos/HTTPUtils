@@ -129,13 +129,12 @@ public class HTTPRequest {
 	}
 
 	/**
-	 * @param body
+	 * @param bodyString
 	 *            the body entity
 	 * @return this
 	 */
-	@SuppressWarnings("hiding")
-	public HTTPRequest body(final String body) {
-		this.body = body;
+	public HTTPRequest body(final String bodyString) {
+		this.body = bodyString;
 		return this;
 	}
 
