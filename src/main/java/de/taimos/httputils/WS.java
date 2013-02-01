@@ -48,4 +48,40 @@ public final class WS {
 	public static int getStatus(final HttpResponse response) {
 		return response.getStatusLine().getStatusCode();
 	}
+
+	/**
+	 * @param response
+	 * @return true if status code if between 200 and 299
+	 */
+	public static boolean isStatusOK(final HttpResponse response) {
+		final int code = WS.getStatus(response);
+		return code >= 200 && code <= 299;
+	}
+
+	/**
+	 * @param response
+	 * @return true if status code if between 300 and 399
+	 */
+	public static boolean isStatusRedirect(final HttpResponse response) {
+		final int code = WS.getStatus(response);
+		return code >= 300 && code <= 399;
+	}
+
+	/**
+	 * @param response
+	 * @return true if status code if between 400 and 499
+	 */
+	public static boolean isStatusClientError(final HttpResponse response) {
+		final int code = WS.getStatus(response);
+		return code >= 400 && code <= 499;
+	}
+
+	/**
+	 * @param response
+	 * @return true if status code if between 500 and 599
+	 */
+	public static boolean isStatusServerError(final HttpResponse response) {
+		final int code = WS.getStatus(response);
+		return code >= 500 && code <= 599;
+	}
 }
