@@ -20,7 +20,6 @@ package de.taimos.httputils;
  * #L%
  */
 
-
 import org.apache.http.HttpResponse;
 import org.junit.Assert;
 import org.junit.Test;

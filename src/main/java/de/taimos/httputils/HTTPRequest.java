@@ -20,7 +20,6 @@ package de.taimos.httputils;
  * #L%
  */
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,6 +56,8 @@ public class HTTPRequest {
 
 	private final HashMap<String, List<String>> queryParams = new HashMap<>();
 
+	private final HashMap<String, String> pathParams = new HashMap<>();
+
 	private String body = "";
 
 	/**
@@ -83,9 +84,9 @@ public class HTTPRequest {
 
 	/**
 	 * @param name
-	 *            the name of the header
+	 *            the name of the query parameter
 	 * @param value
-	 *            the value of the header
+	 *            the value of the query parameter
 	 * @return this
 	 */
 	public HTTPRequest queryParam(final String name, final String value) {
@@ -93,6 +94,18 @@ public class HTTPRequest {
 			this.queryParams.put(name, new ArrayList<String>());
 		}
 		this.queryParams.get(name).add(value);
+		return this;
+	}
+
+	/**
+	 * @param name
+	 *            the name of the path parameter
+	 * @param value
+	 *            the value of the path parameter
+	 * @return this
+	 */
+	public HTTPRequest pathParam(final String name, final String value) {
+		this.pathParams.put(name, value);
 		return this;
 	}
 
@@ -222,7 +235,11 @@ public class HTTPRequest {
 
 	private URI buildURI() {
 		try {
-			final URIBuilder builder = new URIBuilder(this.url);
+			String u = this.url;
+			for (final Entry<String, String> pathEntry : this.pathParams.entrySet()) {
+				u = u.replace("{" + pathEntry.getKey() + "}", pathEntry.getValue());
+			}
+			final URIBuilder builder = new URIBuilder(u);
 			final Set<Entry<String, List<String>>> entrySet = this.queryParams.entrySet();
 			for (final Entry<String, List<String>> entry : entrySet) {
 				final List<String> list = entry.getValue();
