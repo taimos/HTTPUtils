@@ -1,23 +1,14 @@
 package de.taimos.httputils;
 
 /*
- * #%L
- * Taimos HTTPUtils
- * %%
- * Copyright (C) 2012 - 2013 Taimos GmbH
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * #%L Taimos HTTPUtils %% Copyright (C) 2012 - 2013 Taimos GmbH %% Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License. #L%
  */
 
 import java.io.IOException;
@@ -49,29 +40,28 @@ import org.apache.http.impl.client.SystemDefaultHttpClient;
  * 
  */
 public class HTTPRequest {
-
+	
 	private final String url;
-
+	
 	private final HashMap<String, List<String>> headers = new HashMap<>();
-
+	
 	private final HashMap<String, List<String>> queryParams = new HashMap<>();
-
+	
 	private final HashMap<String, String> pathParams = new HashMap<>();
-
+	
 	private String body = "";
-
+	
+	
 	/**
 	 * @param url
 	 */
 	public HTTPRequest(final String url) {
 		this.url = url;
 	}
-
+	
 	/**
-	 * @param name
-	 *            the name of the header
-	 * @param value
-	 *            the value of the header
+	 * @param name the name of the header
+	 * @param value the value of the header
 	 * @return this
 	 */
 	public HTTPRequest header(final String name, final String value) {
@@ -81,12 +71,10 @@ public class HTTPRequest {
 		this.headers.get(name).add(value);
 		return this;
 	}
-
+	
 	/**
-	 * @param name
-	 *            the name of the query parameter
-	 * @param value
-	 *            the value of the query parameter
+	 * @param name the name of the query parameter
+	 * @param value the value of the query parameter
 	 * @return this
 	 */
 	public HTTPRequest queryParam(final String name, final String value) {
@@ -96,46 +84,40 @@ public class HTTPRequest {
 		this.queryParams.get(name).add(value);
 		return this;
 	}
-
+	
 	/**
-	 * @param name
-	 *            the name of the path parameter
-	 * @param value
-	 *            the value of the path parameter
+	 * @param name the name of the path parameter
+	 * @param value the value of the path parameter
 	 * @return this
 	 */
 	public HTTPRequest pathParam(final String name, final String value) {
 		this.pathParams.put(name, value);
 		return this;
 	}
-
+	
 	// #######################
 	// Some header shortcuts
 	// #######################
-
+	
 	/**
-	 * @param type
-	 *            the Content-Type
+	 * @param type the Content-Type
 	 * @return this
 	 */
 	public HTTPRequest contentType(final String type) {
 		return this.header(WSConstants.HEADER_CONTENT_TYPE, type);
 	}
-
+	
 	/**
-	 * @param authString
-	 *            the Authorization header
+	 * @param authString the Authorization header
 	 * @return this
 	 */
 	public HTTPRequest auth(final String authString) {
 		return this.header(WSConstants.HEADER_AUTHORIZATION, authString);
 	}
-
+	
 	/**
-	 * @param user
-	 *            the username
-	 * @param password
-	 *            the password
+	 * @param user the username
+	 * @param password the password
 	 * @return this
 	 */
 	public HTTPRequest authBasic(final String user, final String password) {
@@ -143,70 +125,67 @@ public class HTTPRequest {
 		final String auth = Base64.encodeBase64String(credentials.getBytes());
 		return this.auth("Basic " + auth);
 	}
-
+	
 	/**
-	 * @param accessToken
-	 *            the OAuth2 Bearer access token
+	 * @param accessToken the OAuth2 Bearer access token
 	 * @return this
 	 */
 	public HTTPRequest authBearer(final String accessToken) {
 		return this.auth("Bearer " + accessToken);
 	}
-
+	
 	/**
-	 * @param type
-	 *            the Accept type
+	 * @param type the Accept type
 	 * @return this
 	 */
 	public HTTPRequest accept(final String type) {
 		return this.header(WSConstants.HEADER_ACCEPT, type);
 	}
-
+	
 	/**
-	 * @param bodyString
-	 *            the body entity
+	 * @param bodyString the body entity
 	 * @return this
 	 */
 	public HTTPRequest body(final String bodyString) {
 		this.body = bodyString;
 		return this;
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse get() {
 		return this.execute(new HttpGet(this.buildURI()));
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse put() {
 		return this.execute(new HttpPut(this.buildURI()));
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse post() {
 		return this.execute(new HttpPost(this.buildURI()));
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse delete() {
 		return this.execute(new HttpDelete(this.buildURI()));
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse options() {
 		return this.execute(new HttpOptions(this.buildURI()));
 	}
-
+	
 	private HttpResponse execute(final HttpUriRequest req) {
 		try {
 			final HttpClient httpclient = new SystemDefaultHttpClient();
@@ -223,7 +202,7 @@ public class HTTPRequest {
 					req.addHeader(entry.getKey(), string);
 				}
 			}
-
+			
 			final HttpResponse response = httpclient.execute(req);
 			return response;
 		} catch (final ClientProtocolException e) {
@@ -232,7 +211,7 @@ public class HTTPRequest {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private URI buildURI() {
 		try {
 			String u = this.url;
@@ -253,5 +232,5 @@ public class HTTPRequest {
 			throw new RuntimeException("Invalid URI", e);
 		}
 	}
-
+	
 }
