@@ -34,4 +34,12 @@ public class Tester1 {
 		Assert.assertFalse(body.isEmpty());
 	}
 	
+	/**
+	 * 
+	 */
+	@Test(timeout = 2500, expected = Exception.class)
+	public void testGetWithTimeout() {
+		WS.url("http://www.sdfsdfdfs.de").timeout(2000).get();
+	}
+	
 }
