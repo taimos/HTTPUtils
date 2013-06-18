@@ -34,6 +34,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 /**
  * @author thoeger
@@ -49,11 +52,13 @@ public class HTTPRequest {
 	
 	private final HashMap<String, String> pathParams = new HashMap<>();
 	
+	private Integer timeout;
+	
 	private String body = "";
 	
 	
 	/**
-	 * @param url
+	 * @param url URL
 	 */
 	public HTTPRequest(final String url) {
 		this.url = url;
@@ -92,6 +97,15 @@ public class HTTPRequest {
 	 */
 	public HTTPRequest pathParam(final String name, final String value) {
 		this.pathParams.put(name, value);
+		return this;
+	}
+	
+	/**
+	 * @param newTimeout Timeout in ms
+	 * @return this
+	 */
+	public HTTPRequest timeout(final int newTimeout) {
+		this.timeout = newTimeout;
 		return this;
 	}
 	
@@ -188,7 +202,14 @@ public class HTTPRequest {
 	
 	private HttpResponse execute(final HttpUriRequest req) {
 		try {
-			final HttpClient httpclient = new SystemDefaultHttpClient();
+			final HttpParams httpParams;
+			if (this.timeout != null) {
+				httpParams = new BasicHttpParams();
+				HttpConnectionParams.setConnectionTimeout(httpParams, this.timeout);
+			} else {
+				httpParams = null;
+			}
+			final HttpClient httpclient = new SystemDefaultHttpClient(httpParams);
 			// if request has data populate body
 			if (req instanceof HttpEntityEnclosingRequestBase) {
 				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase) req;
