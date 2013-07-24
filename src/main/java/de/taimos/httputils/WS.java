@@ -50,6 +50,20 @@ public final class WS {
 	}
 	
 	/**
+	 * @param response the {@link HttpResponse}
+	 * @return String the body as UTF-8 string
+	 */
+	public static byte[] getResponseAsBytes(final HttpResponse response) {
+		try {
+			return EntityUtils.toByteArray(response.getEntity());
+		} catch (final ParseException e) {
+			throw new RuntimeException(e);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
 	 * @param response Response
 	 * @return String
 	 */

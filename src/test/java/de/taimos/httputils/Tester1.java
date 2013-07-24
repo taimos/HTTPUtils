@@ -11,6 +11,9 @@ package de.taimos.httputils;
  * and limitations under the License. #L%
  */
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +35,33 @@ public class Tester1 {
 		final String body = WS.getResponseAsString(response);
 		Assert.assertNotNull(body);
 		Assert.assertFalse(body.isEmpty());
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testGetAsync() throws InterruptedException {
+		final CountDownLatch cdl = new CountDownLatch(1);
+		WS.url("http://www.heise.de").getAsync(new HTTPResponseCallback() {
+			
+			@Override
+			public void response(HttpResponse response) {
+				Assert.assertEquals(WS.getStatus(response), 200);
+				Assert.assertTrue(WS.isStatusOK(response));
+				final String body = WS.getResponseAsString(response);
+				Assert.assertNotNull(body);
+				Assert.assertFalse(body.isEmpty());
+				cdl.countDown();
+			}
+			
+			@Override
+			public void fail(Exception e) {
+				Assert.fail();
+				cdl.countDown();
+			}
+		});
+		cdl.await(20, TimeUnit.SECONDS);
 	}
 	
 	/**

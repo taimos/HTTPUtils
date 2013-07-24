@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
@@ -43,6 +45,8 @@ import org.apache.http.params.HttpParams;
  * 
  */
 public class HTTPRequest {
+	
+	private static Executor executor = Executors.newCachedThreadPool();
 	
 	private final String url;
 	
@@ -198,6 +202,57 @@ public class HTTPRequest {
 	 */
 	public HttpResponse options() {
 		return this.execute(new HttpOptions(this.buildURI()));
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void getAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpGet(this.buildURI()), callback);
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void putAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpPut(this.buildURI()), callback);
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void postAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpPost(this.buildURI()), callback);
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void deleteAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpDelete(this.buildURI()), callback);
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void optionsAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpOptions(this.buildURI()), callback);
+	}
+	
+	private void executeAsync(final HttpUriRequest req, final HTTPResponseCallback cb) {
+		Runnable execute = new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					HttpResponse res = HTTPRequest.this.execute(req);
+					cb.response(res);
+				} catch (Exception e) {
+					cb.fail(e);
+				}
+			}
+		};
+		HTTPRequest.executor.execute(execute);
 	}
 	
 	private HttpResponse execute(final HttpUriRequest req) {
