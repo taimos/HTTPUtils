@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -35,10 +35,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * @author thoeger
@@ -256,15 +254,12 @@ public class HTTPRequest {
 	}
 	
 	private HttpResponse execute(final HttpUriRequest req) {
+		HttpClientBuilder builder = HttpClientBuilder.create();
+		if (this.timeout != null) {
+			builder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(this.timeout).build());
+		}
 		try {
-			final HttpParams httpParams;
-			if (this.timeout != null) {
-				httpParams = new BasicHttpParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, this.timeout);
-			} else {
-				httpParams = null;
-			}
-			final HttpClient httpclient = new SystemDefaultHttpClient(httpParams);
+			final CloseableHttpClient httpclient = builder.build();
 			// if request has data populate body
 			if (req instanceof HttpEntityEnclosingRequestBase) {
 				final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase) req;

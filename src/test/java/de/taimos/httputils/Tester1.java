@@ -57,11 +57,10 @@ public class Tester1 {
 			
 			@Override
 			public void fail(Exception e) {
-				Assert.fail();
-				cdl.countDown();
+				System.out.println(e);
 			}
 		});
-		cdl.await(20, TimeUnit.SECONDS);
+		Assert.assertTrue(cdl.await(10, TimeUnit.SECONDS));
 	}
 	
 	/**
