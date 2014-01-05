@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -55,6 +56,8 @@ public class HTTPRequest {
 	private final HashMap<String, String> pathParams = new HashMap<>();
 	
 	private Integer timeout;
+	
+	private boolean followRedirect = true;
 	
 	private String body = "";
 	
@@ -108,6 +111,15 @@ public class HTTPRequest {
 	 */
 	public HTTPRequest timeout(final int newTimeout) {
 		this.timeout = newTimeout;
+		return this;
+	}
+	
+	/**
+	 * @param follow <code>true</code> to automatically follow redirects; <code>false</code> otherwise
+	 * @return this
+	 */
+	public HTTPRequest followRedirect(boolean follow) {
+		this.followRedirect = follow;
 		return this;
 	}
 	
@@ -255,9 +267,12 @@ public class HTTPRequest {
 	
 	private HttpResponse execute(final HttpUriRequest req) {
 		HttpClientBuilder builder = HttpClientBuilder.create();
+		Builder reqConfig = RequestConfig.custom();
 		if (this.timeout != null) {
-			builder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(this.timeout).build());
+			reqConfig.setConnectTimeout(this.timeout);
 		}
+		reqConfig.setRedirectsEnabled(this.followRedirect);
+		builder.setDefaultRequestConfig(reqConfig.build());
 		try {
 			final CloseableHttpClient httpclient = builder.build();
 			// if request has data populate body
