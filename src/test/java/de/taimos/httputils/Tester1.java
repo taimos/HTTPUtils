@@ -18,6 +18,8 @@ import org.apache.http.HttpResponse;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.taimos.httputils.callbacks.HTTPStringCallback;
+
 /**
  * @author thoeger
  * 
@@ -59,6 +61,39 @@ public class Tester1 {
 			public void fail(Exception e) {
 				System.out.println(e);
 			}
+		});
+		Assert.assertTrue(cdl.await(10, TimeUnit.SECONDS));
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testGetAsyncStringCB() throws InterruptedException {
+		final CountDownLatch cdl = new CountDownLatch(1);
+		WS.url("http://www.heise.de").getAsync(new HTTPStringCallback() {
+			
+			@Override
+			public void fail(Exception e) {
+				System.out.println(e);
+				Assert.fail();
+				cdl.countDown();
+			}
+			
+			@Override
+			protected void invalidStatus(int status, HttpResponse response) {
+				System.out.println("Invalid status: " + status);
+				Assert.fail();
+				cdl.countDown();
+			}
+			
+			@Override
+			protected void stringResponse(String body, HttpResponse response) {
+				Assert.assertNotNull(body);
+				Assert.assertFalse(body.isEmpty());
+				cdl.countDown();
+			}
+			
 		});
 		Assert.assertTrue(cdl.await(10, TimeUnit.SECONDS));
 	}
