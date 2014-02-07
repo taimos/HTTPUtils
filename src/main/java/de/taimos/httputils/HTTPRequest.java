@@ -16,7 +16,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -177,6 +179,27 @@ public class HTTPRequest {
 	public HTTPRequest body(final String bodyString) {
 		this.body = bodyString;
 		return this;
+	}
+	
+	/**
+	 * @param form the form content
+	 * @return this
+	 */
+	public HTTPRequest form(Map<String, String> form) {
+		StringBuilder formString = new StringBuilder();
+		Iterator<Entry<String, String>> parts = form.entrySet().iterator();
+		if (parts.hasNext()) {
+			formString.append(parts.next().getKey());
+			formString.append("=");
+			formString.append(parts.next().getValue());
+			while (parts.hasNext()) {
+				formString.append("&");
+				formString.append(parts.next().getKey());
+				formString.append("=");
+				formString.append(parts.next().getValue());
+			}
+		}
+		return this.contentType("application/x-www-form-urlencoded").body(formString.toString());
 	}
 	
 	/**
