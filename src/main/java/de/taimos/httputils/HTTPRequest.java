@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -62,6 +63,8 @@ public class HTTPRequest {
 	private boolean followRedirect = true;
 	
 	private String body = "";
+	
+	private String userAgent = null;
 	
 	
 	/**
@@ -122,6 +125,15 @@ public class HTTPRequest {
 	 */
 	public HTTPRequest followRedirect(boolean follow) {
 		this.followRedirect = follow;
+		return this;
+	}
+	
+	/**
+	 * @param agent the user agent string to use
+	 * @return this
+	 */
+	public HTTPRequest userAgent(String agent) {
+		this.userAgent = agent;
 		return this;
 	}
 	
@@ -219,6 +231,13 @@ public class HTTPRequest {
 	/**
 	 * @return the {@link HttpResponse}
 	 */
+	public HttpResponse patch() {
+		return this.execute(new HttpPatch(this.buildURI()));
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
 	public HttpResponse post() {
 		return this.execute(new HttpPost(this.buildURI()));
 	}
@@ -249,6 +268,13 @@ public class HTTPRequest {
 	 */
 	public void putAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpPut(this.buildURI()), callback);
+	}
+	
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void patchAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpPatch(this.buildURI()), callback);
 	}
 	
 	/**
@@ -296,6 +322,9 @@ public class HTTPRequest {
 		}
 		reqConfig.setRedirectsEnabled(this.followRedirect);
 		builder.setDefaultRequestConfig(reqConfig.build());
+		if ((this.userAgent != null) && !this.userAgent.isEmpty()) {
+			builder.setUserAgent(this.userAgent);
+		}
 		try {
 			final CloseableHttpClient httpclient = builder.build();
 			// if request has data populate body
