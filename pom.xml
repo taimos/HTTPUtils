@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>de.taimos</groupId>
 	<artifactId>httputils</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<version>1.4</version>
 	<name>Taimos HTTPUtils</name>
 
 	<properties>
@@ -93,7 +93,7 @@
 		<url>git://github.com/taimos/HTTPUtils.git</url>
 		<connection>scm:git:git://github.com/taimos/HTTPUtils.git</connection>
 		<developerConnection>scm:git:git@github.com:taimos/HTTPUtils.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>v1.4</tag>
   </scm>
 	<issueManagement>
 		<system>github</system>
