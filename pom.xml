@@ -1,69 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
+		<groupId>de.taimos</groupId>
 		<artifactId>oss-parent</artifactId>
-		<groupId>org.sonatype.oss</groupId>
-		<version>7</version>
+		<version>1</version>
 	</parent>
-	<groupId>de.taimos</groupId>
 	<artifactId>httputils</artifactId>
 	<version>1.5-SNAPSHOT</version>
 	<name>Taimos HTTPUtils</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<developers>
-		<developer>
-			<id>thoeger</id>
-			<email>thorsten.hoeger@taimos.de</email>
-			<name>Thorsten Hoeger</name>
-			<organization>Taimos GmbH</organization>
-			<organizationUrl>http://www.taimos.de</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<build>
-		<plugins>
-			<!-- Compiler plugin enforces Java 1.7 compatibility and activates annotation processors -->
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<goals>deploy nexus-staging:release</goals>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.4.4</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>sonatype-nexus-staging</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
+	<description>Utility package for HTTP calls</description>
+	<inceptionYear>2012</inceptionYear>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -93,18 +40,10 @@
 		<url>git://github.com/taimos/HTTPUtils.git</url>
 		<connection>scm:git:git://github.com/taimos/HTTPUtils.git</connection>
 		<developerConnection>scm:git:git@github.com:taimos/HTTPUtils.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<issueManagement>
 		<system>github</system>
 		<url>https://github.com/taimos/HTTPUtils/issues</url>
 	</issueManagement>
-	<inceptionYear>2012</inceptionYear>
-	<organization>
-		<name>Taimos GmbH</name>
-		<url>http://www.taimos.de</url>
-	</organization>
-	<prerequisites>
-		<maven>3.0.0</maven>
-	</prerequisites>
 </project>
