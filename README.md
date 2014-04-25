@@ -3,7 +3,7 @@ httputils
 
 HTTP Utilities
 
-[![Build Status](https://travis-ci.org/taimos/httputils.png?branch=master)](https://travis-ci.org/taimos/httputils)
+[![Build Status](https://travis-ci.org/taimos/HTTPUtils.png?branch=master)](https://travis-ci.org/taimos/HTTPUtils)
 
 Usage
 =====
