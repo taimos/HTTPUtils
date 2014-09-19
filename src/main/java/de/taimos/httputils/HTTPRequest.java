@@ -32,6 +32,7 @@ import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
@@ -44,7 +45,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * @author thoeger
- * 
+ *
  */
 public class HTTPRequest {
 	
@@ -255,6 +256,13 @@ public class HTTPRequest {
 	public HttpResponse options() {
 		return this.execute(new HttpOptions(this.buildURI()));
 	}
+
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public HttpResponse head() {
+		return this.execute(new HttpHead(this.buildURI()));
+	}
 	
 	/**
 	 * @return the {@link HttpResponse}
@@ -296,6 +304,13 @@ public class HTTPRequest {
 	 */
 	public void optionsAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpOptions(this.buildURI()), callback);
+	}
+
+	/**
+	 * @return the {@link HttpResponse}
+	 */
+	public void headAsync(HTTPResponseCallback callback) {
+		this.executeAsync(new HttpHead(this.buildURI()), callback);
 	}
 	
 	private void executeAsync(final HttpUriRequest req, final HTTPResponseCallback cb) {
