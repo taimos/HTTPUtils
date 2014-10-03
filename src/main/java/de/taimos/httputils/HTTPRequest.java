@@ -3,9 +3,9 @@ package de.taimos.httputils;
 /*
  * #%L Taimos HTTPUtils %% Copyright (C) 2012 - 2013 Taimos GmbH %% Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License. #L%
@@ -48,33 +48,33 @@ import org.apache.http.impl.client.HttpClientBuilder;
  *
  */
 public class HTTPRequest {
-	
+
 	private static Executor executor = Executors.newCachedThreadPool();
-	
+
 	private final String url;
-	
+
 	private final HashMap<String, List<String>> headers = new HashMap<>();
-	
+
 	private final HashMap<String, List<String>> queryParams = new HashMap<>();
-	
+
 	private final HashMap<String, String> pathParams = new HashMap<>();
-	
+
 	private Integer timeout;
-	
+
 	private boolean followRedirect = true;
-	
+
 	private String body = "";
-	
+
 	private String userAgent = null;
-	
-	
+
+
 	/**
 	 * @param url URL
 	 */
 	public HTTPRequest(final String url) {
 		this.url = url;
 	}
-	
+
 	/**
 	 * @param name the name of the header
 	 * @param value the value of the header
@@ -87,7 +87,7 @@ public class HTTPRequest {
 		this.headers.get(name).add(value);
 		return this;
 	}
-	
+
 	/**
 	 * @param name the name of the query parameter
 	 * @param value the value of the query parameter
@@ -100,7 +100,7 @@ public class HTTPRequest {
 		this.queryParams.get(name).add(value);
 		return this;
 	}
-	
+
 	/**
 	 * @param name the name of the path parameter
 	 * @param value the value of the path parameter
@@ -110,7 +110,7 @@ public class HTTPRequest {
 		this.pathParams.put(name, value);
 		return this;
 	}
-	
+
 	/**
 	 * @param newTimeout Timeout in ms
 	 * @return this
@@ -119,7 +119,7 @@ public class HTTPRequest {
 		this.timeout = newTimeout;
 		return this;
 	}
-	
+
 	/**
 	 * @param follow <code>true</code> to automatically follow redirects; <code>false</code> otherwise
 	 * @return this
@@ -128,7 +128,7 @@ public class HTTPRequest {
 		this.followRedirect = follow;
 		return this;
 	}
-	
+
 	/**
 	 * @param agent the user agent string to use
 	 * @return this
@@ -137,11 +137,11 @@ public class HTTPRequest {
 		this.userAgent = agent;
 		return this;
 	}
-	
+
 	// #######################
 	// Some header shortcuts
 	// #######################
-	
+
 	/**
 	 * @param type the Content-Type
 	 * @return this
@@ -149,7 +149,7 @@ public class HTTPRequest {
 	public HTTPRequest contentType(final String type) {
 		return this.header(WSConstants.HEADER_CONTENT_TYPE, type);
 	}
-	
+
 	/**
 	 * @param authString the Authorization header
 	 * @return this
@@ -157,7 +157,7 @@ public class HTTPRequest {
 	public HTTPRequest auth(final String authString) {
 		return this.header(WSConstants.HEADER_AUTHORIZATION, authString);
 	}
-	
+
 	/**
 	 * @param user the username
 	 * @param password the password
@@ -168,7 +168,7 @@ public class HTTPRequest {
 		final String auth = Base64.encodeBase64String(credentials.getBytes());
 		return this.auth("Basic " + auth);
 	}
-	
+
 	/**
 	 * @param accessToken the OAuth2 Bearer access token
 	 * @return this
@@ -176,7 +176,7 @@ public class HTTPRequest {
 	public HTTPRequest authBearer(final String accessToken) {
 		return this.auth("Bearer " + accessToken);
 	}
-	
+
 	/**
 	 * @param type the Accept type
 	 * @return this
@@ -184,7 +184,7 @@ public class HTTPRequest {
 	public HTTPRequest accept(final String type) {
 		return this.header(WSConstants.HEADER_ACCEPT, type);
 	}
-	
+
 	/**
 	 * @param bodyString the body entity
 	 * @return this
@@ -193,7 +193,7 @@ public class HTTPRequest {
 		this.body = bodyString;
 		return this;
 	}
-	
+
 	/**
 	 * @param form the form content
 	 * @return this
@@ -202,120 +202,122 @@ public class HTTPRequest {
 		StringBuilder formString = new StringBuilder();
 		Iterator<Entry<String, String>> parts = form.entrySet().iterator();
 		if (parts.hasNext()) {
-			formString.append(parts.next().getKey());
+			Entry<String, String> entry = parts.next();
+			formString.append(entry.getKey());
 			formString.append("=");
-			formString.append(parts.next().getValue());
+			formString.append(entry.getValue());
 			while (parts.hasNext()) {
+				entry = parts.next();
 				formString.append("&");
-				formString.append(parts.next().getKey());
+				formString.append(entry.getKey());
 				formString.append("=");
-				formString.append(parts.next().getValue());
+				formString.append(entry.getValue());
 			}
 		}
 		return this.contentType("application/x-www-form-urlencoded").body(formString.toString());
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse get() {
 		return this.execute(new HttpGet(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse put() {
 		return this.execute(new HttpPut(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse patch() {
 		return this.execute(new HttpPatch(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse post() {
 		return this.execute(new HttpPost(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse delete() {
 		return this.execute(new HttpDelete(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse options() {
 		return this.execute(new HttpOptions(this.buildURI()));
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public HttpResponse head() {
 		return this.execute(new HttpHead(this.buildURI()));
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void getAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpGet(this.buildURI()), callback);
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void putAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpPut(this.buildURI()), callback);
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void patchAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpPatch(this.buildURI()), callback);
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void postAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpPost(this.buildURI()), callback);
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void deleteAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpDelete(this.buildURI()), callback);
 	}
-	
+
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void optionsAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpOptions(this.buildURI()), callback);
 	}
-
+	
 	/**
 	 * @return the {@link HttpResponse}
 	 */
 	public void headAsync(HTTPResponseCallback callback) {
 		this.executeAsync(new HttpHead(this.buildURI()), callback);
 	}
-	
+
 	private void executeAsync(final HttpUriRequest req, final HTTPResponseCallback cb) {
 		Runnable execute = new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
@@ -328,7 +330,7 @@ public class HTTPRequest {
 		};
 		HTTPRequest.executor.execute(execute);
 	}
-	
+
 	private HttpResponse execute(final HttpUriRequest req) {
 		HttpClientBuilder builder = HttpClientBuilder.create();
 		Builder reqConfig = RequestConfig.custom();
@@ -355,7 +357,7 @@ public class HTTPRequest {
 					req.addHeader(entry.getKey(), string);
 				}
 			}
-			
+
 			final HttpResponse response = httpclient.execute(req);
 			return response;
 		} catch (final ClientProtocolException e) {
@@ -364,7 +366,7 @@ public class HTTPRequest {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private URI buildURI() {
 		try {
 			String u = this.url;
@@ -385,5 +387,5 @@ public class HTTPRequest {
 			throw new RuntimeException("Invalid URI", e);
 		}
 	}
-	
+
 }
