@@ -14,13 +14,13 @@ package de.taimos.httputils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -49,23 +49,23 @@ import org.apache.http.impl.client.HttpClientBuilder;
  */
 public class HTTPRequest {
 
-	private static Executor executor = Executors.newCachedThreadPool();
+	private static final Executor DEFAULT_EXECUTOR = Executors.newCachedThreadPool();
 
 	private final String url;
 
-	private final HashMap<String, List<String>> headers = new HashMap<>();
+	private final Map<String, List<String>> headers = new ConcurrentHashMap<>();
 
-	private final HashMap<String, List<String>> queryParams = new HashMap<>();
+	private final Map<String, List<String>> queryParams = new ConcurrentHashMap<>();
 
-	private final HashMap<String, String> pathParams = new HashMap<>();
+	private final Map<String, String> pathParams = new ConcurrentHashMap<>();
 
-	private Integer timeout;
+	private volatile Integer timeout;
 
-	private boolean followRedirect = true;
+	private volatile boolean followRedirect = true;
 
-	private String body = "";
+	private volatile String body = "";
 
-	private String userAgent = null;
+	private volatile String userAgent = null;
 
 
 	/**
@@ -82,7 +82,7 @@ public class HTTPRequest {
 	 */
 	public HTTPRequest header(final String name, final String value) {
 		if (!this.headers.containsKey(name)) {
-			this.headers.put(name, new ArrayList<String>());
+			this.headers.put(name, new CopyOnWriteArrayList<String>());
 		}
 		this.headers.get(name).add(value);
 		return this;
@@ -95,7 +95,7 @@ public class HTTPRequest {
 	 */
 	public HTTPRequest queryParam(final String name, final String value) {
 		if (!this.queryParams.containsKey(name)) {
-			this.queryParams.put(name, new ArrayList<String>());
+			this.queryParams.put(name, new CopyOnWriteArrayList<String>());
 		}
 		this.queryParams.get(name).add(value);
 		return this;
@@ -124,7 +124,7 @@ public class HTTPRequest {
 	 * @param follow <code>true</code> to automatically follow redirects; <code>false</code> otherwise
 	 * @return this
 	 */
-	public HTTPRequest followRedirect(boolean follow) {
+	public HTTPRequest followRedirect(final boolean follow) {
 		this.followRedirect = follow;
 		return this;
 	}
@@ -133,7 +133,7 @@ public class HTTPRequest {
 	 * @param agent the user agent string to use
 	 * @return this
 	 */
-	public HTTPRequest userAgent(String agent) {
+	public HTTPRequest userAgent(final String agent) {
 		this.userAgent = agent;
 		return this;
 	}
@@ -198,16 +198,16 @@ public class HTTPRequest {
 	 * @param form the form content
 	 * @return this
 	 */
-	public HTTPRequest form(Map<String, String> form) {
-		StringBuilder formString = new StringBuilder();
-		Iterator<Entry<String, String>> parts = form.entrySet().iterator();
+	public HTTPRequest form(final Map<String, String> form) {
+		final StringBuilder formString = new StringBuilder();
+		final Iterator<Entry<String, String>> parts = form.entrySet().iterator();
 		if (parts.hasNext()) {
-			Entry<String, String> entry = parts.next();
-			formString.append(entry.getKey());
+			final Entry<String, String> firstEntry = parts.next();
+			formString.append(firstEntry.getKey());
 			formString.append("=");
-			formString.append(entry.getValue());
+			formString.append(firstEntry.getValue());
 			while (parts.hasNext()) {
-				entry = parts.next();
+				final Entry<String, String> entry = parts.next();
 				formString.append("&");
 				formString.append(entry.getKey());
 				formString.append("=");
@@ -267,73 +267,146 @@ public class HTTPRequest {
 	}
 
 	/**
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void getAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpGet(this.buildURI()), callback);
+	public void getAsync(final HTTPResponseCallback callback) {
+		this.getAsync(DEFAULT_EXECUTOR, callback);
 	}
 
 	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void putAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpPut(this.buildURI()), callback);
+	public void getAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpGet(this.buildURI()), callback);
 	}
 
 	/**
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void patchAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpPatch(this.buildURI()), callback);
+	public void putAsync(final HTTPResponseCallback callback) {
+		this.putAsync(DEFAULT_EXECUTOR, callback);
 	}
 
 	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void postAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpPost(this.buildURI()), callback);
+	public void putAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpPut(this.buildURI()), callback);
 	}
 
 	/**
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void deleteAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpDelete(this.buildURI()), callback);
+	public void patchAsync(final HTTPResponseCallback callback) {
+		this.patchAsync(DEFAULT_EXECUTOR, callback);
 	}
 
 	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void optionsAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpOptions(this.buildURI()), callback);
+	public void patchAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpPatch(this.buildURI()), callback);
+	}
+
+	/**
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void postAsync(final HTTPResponseCallback callback) {
+		this.postAsync(DEFAULT_EXECUTOR, callback);
+	}
+
+	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void postAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpPost(this.buildURI()), callback);
+	}
+
+	/**
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void deleteAsync(final HTTPResponseCallback callback) {
+		this.deleteAsync(DEFAULT_EXECUTOR, callback);
+	}
+
+	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void deleteAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpDelete(this.buildURI()), callback);
+	}
+
+	/**
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void optionsAsync(final HTTPResponseCallback callback) {
+		this.optionsAsync(DEFAULT_EXECUTOR, callback);
+	}
+
+	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void optionsAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpOptions(this.buildURI()), callback);
 	}
 	
 	/**
+	 * @param callback {@link HTTPResponseCallback}
 	 * @return the {@link HttpResponse}
 	 */
-	public void headAsync(HTTPResponseCallback callback) {
-		this.executeAsync(new HttpHead(this.buildURI()), callback);
+	public void headAsync(final HTTPResponseCallback callback) {
+		this.headAsync(DEFAULT_EXECUTOR, callback);
 	}
 
-	private void executeAsync(final HttpUriRequest req, final HTTPResponseCallback cb) {
-		Runnable execute = new Runnable() {
+	/**
+	 * @param executor Thread pool
+	 * @param callback {@link HTTPResponseCallback}
+	 * @return the {@link HttpResponse}
+	 */
+	public void headAsync(final Executor executor, final HTTPResponseCallback callback) {
+		this.executeAsync(executor, new HttpHead(this.buildURI()), callback);
+	}
+
+	private void executeAsync(final Executor executor, final HttpUriRequest req, final HTTPResponseCallback cb) {
+		final Runnable execute = new Runnable() {
 
 			@Override
 			public void run() {
+				final HttpResponse res;
 				try {
-					HttpResponse res = HTTPRequest.this.execute(req);
-					cb.response(res);
-				} catch (Exception e) {
+					res = HTTPRequest.this.execute(req);
+
+				} catch (final Exception e) {
 					cb.fail(e);
+					return;
 				}
+				cb.response(res);
 			}
 		};
-		HTTPRequest.executor.execute(execute);
+		executor.execute(execute);
 	}
 
 	private HttpResponse execute(final HttpUriRequest req) {
-		HttpClientBuilder builder = HttpClientBuilder.create();
-		Builder reqConfig = RequestConfig.custom();
+		final HttpClientBuilder builder = HttpClientBuilder.create();
+		final Builder reqConfig = RequestConfig.custom();
 		if (this.timeout != null) {
 			reqConfig.setConnectTimeout(this.timeout);
 		}
