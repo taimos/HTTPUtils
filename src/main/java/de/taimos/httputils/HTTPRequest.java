@@ -268,7 +268,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void getAsync(final HTTPResponseCallback callback) {
 		this.getAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -277,7 +276,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void getAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpGet(this.buildURI()), callback);
@@ -285,7 +283,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void putAsync(final HTTPResponseCallback callback) {
 		this.putAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -294,7 +291,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void putAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpPut(this.buildURI()), callback);
@@ -302,7 +298,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void patchAsync(final HTTPResponseCallback callback) {
 		this.patchAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -311,7 +306,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void patchAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpPatch(this.buildURI()), callback);
@@ -319,7 +313,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void postAsync(final HTTPResponseCallback callback) {
 		this.postAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -328,7 +321,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void postAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpPost(this.buildURI()), callback);
@@ -336,7 +328,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void deleteAsync(final HTTPResponseCallback callback) {
 		this.deleteAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -345,7 +336,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void deleteAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpDelete(this.buildURI()), callback);
@@ -353,7 +343,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void optionsAsync(final HTTPResponseCallback callback) {
 		this.optionsAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -362,7 +351,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void optionsAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpOptions(this.buildURI()), callback);
@@ -370,7 +358,6 @@ public final class HTTPRequest {
 	
 	/**
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void headAsync(final HTTPResponseCallback callback) {
 		this.headAsync(HTTPRequest.DEFAULT_EXECUTOR, callback);
@@ -379,7 +366,6 @@ public final class HTTPRequest {
 	/**
 	 * @param executor Thread pool
 	 * @param callback {@link HTTPResponseCallback}
-	 * @return the {@link HttpResponse}
 	 */
 	public void headAsync(final Executor executor, final HTTPResponseCallback callback) {
 		this.executeAsync(executor, new HttpHead(this.buildURI()), callback);
