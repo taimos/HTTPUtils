@@ -10,7 +10,7 @@ package de.taimos.httputils;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -173,6 +173,12 @@ public final class HTTPRequest {
 	 * @return this
 	 */
 	public HTTPRequest authBasic(final String user, final String password) {
+		if ((user == null) || (password == null)) {
+			throw new IllegalArgumentException("Neither user nor password can be null");
+		}
+		if (user.contains(":")) {
+			throw new IllegalArgumentException("Colon not allowed in user according to RFC2617 Sec. 2");
+		}
 		final String credentials = user + ":" + password;
 		final String auth = Base64.encodeBase64String(credentials.getBytes());
 		return this.auth("Basic " + auth);
