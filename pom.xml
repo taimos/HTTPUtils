@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>de.taimos</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>4</version>
+		<version>5</version>
 	</parent>
 	<artifactId>httputils</artifactId>
 	<version>1.10-SNAPSHOT</version>
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.4.1</version>
+			<version>4.5</version>
 		</dependency>
 
 		<dependency>
