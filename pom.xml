@@ -6,7 +6,7 @@
 		<version>5</version>
 	</parent>
 	<artifactId>httputils</artifactId>
-	<version>1.11-SNAPSHOT</version>
+	<version>1.11</version>
 	<name>Taimos HTTPUtils</name>
 	<description>Utility package for HTTP calls</description>
 	<inceptionYear>2012</inceptionYear>
@@ -33,7 +33,7 @@
 		<url>git://github.com/taimos/HTTPUtils.git</url>
 		<connection>scm:git:git://github.com/taimos/HTTPUtils.git</connection>
 		<developerConnection>scm:git:git@github.com:taimos/HTTPUtils.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>v1.11</tag>
 	</scm>
 	<issueManagement>
 		<system>github</system>
