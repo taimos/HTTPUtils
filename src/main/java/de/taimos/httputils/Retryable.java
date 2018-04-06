@@ -20,21 +20,29 @@ package de.taimos.httputils;
  * #L%
  */
 
+import java.util.Optional;
+
 /**
  * @author thoeger
  */
-public final class WS {
-
-    private WS() {
-        //
-    }
+@FunctionalInterface
+public interface Retryable {
 
     /**
-     * @param url the base URL
-     * @return the created {@link HTTPRequest}
+     * Decide if a attempt should be retried
+     *
+     * @param exception  If an exception occurred, this parameter is filled
+     * @param statusCode Otheriwse, the statusCode is provided
+     * @return true if the attempt should be retried
      */
-    public static HTTPRequest url(final String url) {
-        return new HTTPRequest(url);
-    }
+    boolean retry(final Optional<Exception> exception, final Optional<Integer> statusCode);
 
+    static Retryable standard() {
+        return (exception, statusCode) -> {
+            if (exception.isPresent()) {
+                return true;
+            }
+            return statusCode.map(code -> (code >= 500 && code < 599)).orElseThrow(IllegalStateException::new);
+        };
+    }
 }
