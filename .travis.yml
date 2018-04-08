@@ -2,9 +2,9 @@ language: java
 jdk:
   - oraclejdk8
 script:
-- mvn clean install sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 addons:
   sonarcloud:
     organization: "taimos"
     token:
-      secure: "vmg7zht8Jj+qyJ9TieFDmZTFrNE1jOTbEoxjCFnozywdpNycmrAHlNhJuoBwdjFmIgo50bcF9f2uj4tPXyfSqWMKzYZyo2MZqfrnmgsCMHfmiE62Ti2IsVUKDuCFJCW+Rx/etzTffr1vdLe41enzyWSSs6eURzNUEOHUs00I/rU5dVRAlMPmLvGV3kR4AeTmNfTQJ5ugsjNx/cmrvvp1jkE4MDBL9nlEDZl+CW6mVfhBeJqDLqSOalA5GTyD5/HKlupsD7ebTHBjZGnj5GFm0WtFtKslVfZPZKUUOQcw3M3IWOaV9pri+P6XBvAxavPUKvij5vrr8R3hDRVpKTxwHJtLlmV82XjDZ+inoidL1eLpe63Js0BVNkX5M32qKstR+H015VEj8Pu2q5d04M0Y4HcsTuQtjp0pAaO2Y9b9T5GGiLOv0d5+H0LxAVDK/ITzwifXKXIZPKHG4M2GzubWOvoJUdo+SbF4XtMhBMry+v9qr8mzKp72e5TstncsUWz4f/8XKJ2GK9jvwTPik+J1sHVbj5NghH55uJea8EBsdsDn7K8o6vkT75anyYf07ulZiC0V1Udsnr5uFwnWun28QtelPWrtxwRcdDQEBLBAReKvEpjYd/CRZAVYbFc70zkY53oDLD2kE0qb6x8+IRN8CDZ27jSW4K44eLMlKhX+Dt4="
+      secure: "ewy3QTmHL32dPg2Kq8LO1997AMG+gWm5JGOGcSoVYkIBWQGLDyA8T0U9bwLALOIVs8/nQlp+UE3eZZYoozpETqBNc24zlkoiK0ojUl1VwwPcHBHo+0T1XPrOcUn1zuKhgkT9UsgghNjEOppRXFY3hQhAmOjI6MutmSoZz95JD3A="
