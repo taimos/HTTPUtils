@@ -20,13 +20,14 @@ package de.taimos.httputils;
  * #L%
  */
 
-import de.taimos.httputils.callbacks.HTTPStringCallback;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import de.taimos.httputils.callbacks.HTTPStringCallback;
 
 /**
  * @author thoeger
@@ -39,11 +40,7 @@ public class RealTester {
     @Test
     public void testGetSuccess() {
         try (final HTTPResponse response = WS.url("http://www.heise.de").get()) {
-            Assert.assertEquals(response.getStatus(), 200);
-            Assert.assertTrue(response.isStatusOK());
-            final String body = response.getResponseAsString();
-            Assert.assertNotNull(body);
-            Assert.assertFalse(body.isEmpty());
+            this.assertOKWithBody(response);
         }
     }
 
@@ -53,11 +50,7 @@ public class RealTester {
     @Test
     public void testGetSuccessWithRetry() {
         try (final HTTPResponse response = WS.url("http://www.heise.de").retry().get()) {
-            Assert.assertEquals(response.getStatus(), 200);
-            Assert.assertTrue(response.isStatusOK());
-            final String body = response.getResponseAsString();
-            Assert.assertNotNull(body);
-            Assert.assertFalse(body.isEmpty());
+            this.assertOKWithBody(response);
         }
     }
 
@@ -71,11 +64,7 @@ public class RealTester {
 
             @Override
             public void response(final HTTPResponse response) {
-                Assert.assertEquals(response.getStatus(), 200);
-                Assert.assertTrue(response.isStatusOK());
-                final String body = response.getResponseAsString();
-                Assert.assertNotNull(body);
-                Assert.assertFalse(body.isEmpty());
+                RealTester.this.assertOKWithBody(response);
                 cdl.countDown();
             }
 
@@ -97,11 +86,7 @@ public class RealTester {
 
             @Override
             public void response(final HTTPResponse response) {
-                Assert.assertEquals(response.getStatus(), 200);
-                Assert.assertTrue(response.isStatusOK());
-                final String body = response.getResponseAsString();
-                Assert.assertNotNull(body);
-                Assert.assertFalse(body.isEmpty());
+                RealTester.this.assertOKWithBody(response);
                 cdl.countDown();
             }
 
@@ -151,7 +136,7 @@ public class RealTester {
      */
     @Test(timeout = 2000)
     public void testTimeout() {
-        try (final HTTPResponse response = WS.url("http://www.sdfsdfdfs.de").timeout(1000).get()) {
+        try (final HTTPResponse ignored = WS.url("http://www.sdfsdfdfs.de").timeout(1000).get()) {
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals(UnknownHostException.class, e.getCause().getClass());
@@ -164,13 +149,21 @@ public class RealTester {
     @Test(timeout = 4000, expected = RuntimeException.class)
     public void testRetryExhausted() {
         final WaitStrategy zero = (retry) -> 0;
-        try (final HTTPResponse response = WS.url("http://www.sdfsdfdfs.de").timeout(1000).retry(2, Retryable.standard(), zero).get()) {
+        try (final HTTPResponse ignored = WS.url("http://www.sdfsdfdfs.de").timeout(1000).retry(2, Retryable.standard(), zero).get()) {
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals("retry exhausted", e.getMessage());
             Assert.assertEquals(UnknownHostException.class, e.getCause().getClass());
             throw e;
         }
+    }
+
+    private void assertOKWithBody(HTTPResponse response) {
+        Assert.assertEquals(response.getStatus(), 200);
+        Assert.assertTrue(response.isStatusOK());
+        final String body = response.getResponseAsString();
+        Assert.assertNotNull(body);
+        Assert.assertFalse(body.isEmpty());
     }
 
 }

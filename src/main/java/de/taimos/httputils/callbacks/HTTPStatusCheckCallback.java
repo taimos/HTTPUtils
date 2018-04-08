@@ -20,9 +20,10 @@ package de.taimos.httputils.callbacks;
  * #L%
  */
 
+import org.apache.http.HttpResponse;
+
 import de.taimos.httputils.HTTPResponse;
 import de.taimos.httputils.HTTPResponseCallback;
-import org.apache.http.HttpResponse;
 
 public abstract class HTTPStatusCheckCallback implements HTTPResponseCallback {
 

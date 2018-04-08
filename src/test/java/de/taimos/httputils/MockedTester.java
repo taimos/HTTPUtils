@@ -20,14 +20,18 @@ package de.taimos.httputils;
  * #L%
  */
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 /**
  * @author thoeger
@@ -71,7 +75,7 @@ public class MockedTester {
                 .willReturn(aResponse().withStatus(500))
                 .willSetStateTo("done")
         );
-        try (final HTTPResponse response = WS.url("http://localhost:" + PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100)).get()) {
+        try (final HTTPResponse ignored = WS.url("http://localhost:" + PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100)).get()) {
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals("retry exhausted", e.getMessage());

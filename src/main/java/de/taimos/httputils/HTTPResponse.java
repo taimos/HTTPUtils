@@ -1,10 +1,10 @@
 package de.taimos.httputils;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
 
 public class HTTPResponse implements AutoCloseable {
 
