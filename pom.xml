@@ -11,9 +11,9 @@
     <description>Utility package for HTTP calls</description>
     <inceptionYear>2012</inceptionYear>
     <properties>
-        <httpclient.version>4.5.5</httpclient.version>
+        <httpclient.version>4.5.9</httpclient.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <wiremock.version>2.16.0</wiremock.version>
+        <wiremock.version>2.24.1</wiremock.version>
     </properties>
     <dependencies>
         <dependency>
