@@ -20,20 +20,6 @@ package de.taimos.httputils;
  * #L%
  */
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
@@ -51,6 +37,20 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 /**
  * @author thoeger
  */
@@ -58,7 +58,7 @@ public final class HTTPRequest {
 
     private static final Executor DEFAULT_EXECUTOR = Executors.newCachedThreadPool();
 
-    private static final CloseableHttpClient DEFAULT_HTTP_CLIENT = HttpClientBuilder.create().build();
+    private static CloseableHttpClient DEFAULT_HTTP_CLIENT = HttpClientBuilder.create().build();
 
     private final String url;
 
@@ -82,55 +82,6 @@ public final class HTTPRequest {
 
     private volatile WaitStrategy waitStrategy = null;
 
-    interface Request {
-        HttpRequestBase request(URI uri);
-    }
-
-    public enum Method implements Request {
-        GET {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpGet(uri);
-            }
-        },
-        HEAD {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpHead(uri);
-            }
-        },
-        POST {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpPost(uri);
-            }
-        },
-        PUT {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpPut(uri);
-            }
-        },
-        DELETE {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpDelete(uri);
-            }
-        },
-        PATCH {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpPatch(uri);
-            }
-        },
-        OPTIONS {
-            @Override
-            public HttpRequestBase request(final URI uri) {
-                return new HttpOptions(uri);
-            }
-        }
-    }
-
     /**
      * @param url URL
      */
@@ -139,12 +90,19 @@ public final class HTTPRequest {
     }
 
     /**
+     * resets the http client
+     */
+    public static void resetHTTPClient() {
+        HTTPRequest.DEFAULT_HTTP_CLIENT = HttpClientBuilder.create().build();
+    }
+
+    /**
      * @param name  the name of the header
      * @param value the value of the header
      * @return this
      */
     public HTTPRequest header(final String name, final String value) {
-        if (!this.headers.containsKey(name)) {
+        if(!this.headers.containsKey(name)) {
             this.headers.put(name, new CopyOnWriteArrayList<String>());
         }
         this.headers.get(name).add(value);
@@ -157,7 +115,7 @@ public final class HTTPRequest {
      * @return this
      */
     public HTTPRequest queryParam(final String name, final String value) {
-        if (!this.queryParams.containsKey(name)) {
+        if(!this.queryParams.containsKey(name)) {
             this.queryParams.put(name, new CopyOnWriteArrayList<String>());
         }
         this.queryParams.get(name).add(value);
@@ -201,13 +159,13 @@ public final class HTTPRequest {
      * @return this
      */
     public HTTPRequest retry(final int maxRetries, final Retryable retryable, final WaitStrategy waitStrategy) {
-        if (maxRetries <= 0) {
+        if(maxRetries <= 0) {
             throw new IllegalArgumentException("maxRetries must be > 0");
         }
-        if (retryable == null) {
+        if(retryable == null) {
             throw new IllegalArgumentException("retryable must not be null");
         }
-        if (waitStrategy == null) {
+        if(waitStrategy == null) {
             throw new IllegalArgumentException("waitStrategy must not be null");
         }
         this.maxRetries = maxRetries;
@@ -234,10 +192,6 @@ public final class HTTPRequest {
         return this;
     }
 
-    // #######################
-    // Some header shortcuts
-    // #######################
-
     /**
      * @param type the Content-Type
      * @return this
@@ -245,6 +199,10 @@ public final class HTTPRequest {
     public HTTPRequest contentType(final String type) {
         return this.header(WSConstants.HEADER_CONTENT_TYPE, type);
     }
+
+    // #######################
+    // Some header shortcuts
+    // #######################
 
     /**
      * @param authString the Authorization header
@@ -260,10 +218,10 @@ public final class HTTPRequest {
      * @return this
      */
     public HTTPRequest authBasic(final String user, final String password) {
-        if ((user == null) || (password == null)) {
+        if((user == null) || (password == null)) {
             throw new IllegalArgumentException("Neither user nor password can be null");
         }
-        if (user.contains(":")) {
+        if(user.contains(":")) {
             throw new IllegalArgumentException("Colon not allowed in user according to RFC2617 Sec. 2");
         }
         final String credentials = user + ":" + password;
@@ -303,12 +261,12 @@ public final class HTTPRequest {
     public HTTPRequest form(final Map<String, String> form) {
         final StringBuilder formString = new StringBuilder();
         final Iterator<Entry<String, String>> parts = form.entrySet().iterator();
-        if (parts.hasNext()) {
+        if(parts.hasNext()) {
             final Entry<String, String> firstEntry = parts.next();
             formString.append(firstEntry.getKey());
             formString.append("=");
             formString.append(firstEntry.getValue());
-            while (parts.hasNext()) {
+            while(parts.hasNext()) {
                 final Entry<String, String> entry = parts.next();
                 formString.append("&");
                 formString.append(entry.getKey());
@@ -478,7 +436,7 @@ public final class HTTPRequest {
             final HTTPResponse res;
             try {
                 res = HTTPRequest.this.execute(method);
-            } catch (final Exception e) {
+            } catch(final Exception e) {
                 cb.fail(e);
                 return;
             }
@@ -495,24 +453,24 @@ public final class HTTPRequest {
     private HTTPResponse execute(final Method method) {
         final URI uri = this.buildURI();
         // attempt == 0 is not a retry, attempt > 0 are retries
-        for (int attempt = 0; attempt <= this.maxRetries; attempt++) {
-            if (attempt > 0) {
+        for(int attempt = 0; attempt <= this.maxRetries; attempt++) {
+            if(attempt > 0) {
                 final int wait = this.waitStrategy.milliseconds(attempt - 1);
-                if (wait > 0) {
+                if(wait > 0) {
                     try {
                         Thread.sleep(wait);
-                    } catch (final InterruptedException e) {
+                    } catch(final InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 }
             }
             try {
                 final HTTPResponse response = this.attempt(method, uri);
-                if (this.retryable != null) {
+                if(this.retryable != null) {
                     final int statusCode = response.getStatus();
-                    if (this.retryable.retry(Optional.empty(), Optional.of(statusCode))) {
+                    if(this.retryable.retry(Optional.empty(), Optional.of(statusCode))) {
                         response.close(); // we are not interested in the body
-                        if (attempt < this.maxRetries) {
+                        if(attempt < this.maxRetries) {
                             continue; // retry
                         } else {
                             throw new RuntimeException("status code " + statusCode);
@@ -520,9 +478,9 @@ public final class HTTPRequest {
                     }
                 }
                 return response;
-            } catch (final IOException e) {
-                if (this.retryable != null) {
-                    if (attempt < this.maxRetries) {
+            } catch(final IOException e) {
+                if(this.retryable != null) {
+                    if(attempt < this.maxRetries) {
                         continue; // retry
                     } else {
                         throw new RuntimeException("retry exhausted", e);
@@ -530,9 +488,9 @@ public final class HTTPRequest {
                 } else {
                     throw new RuntimeException(e);
                 }
-            } catch (final RuntimeException e) {
-                if (this.retryable != null) {
-                    if (attempt < this.maxRetries) {
+            } catch(final RuntimeException e) {
+                if(this.retryable != null) {
+                    if(attempt < this.maxRetries) {
                         continue; // retry
                     } else {
                         throw new RuntimeException("retry exhausted", e);
@@ -548,7 +506,7 @@ public final class HTTPRequest {
     private HTTPResponse attempt(final Method method, final URI uri) throws IOException {
         // prepare request configuration
         final Builder requestConfigBuilder = RequestConfig.custom();
-        if (this.timeout != null) {
+        if(this.timeout != null) {
             requestConfigBuilder.setConnectTimeout(this.timeout);
             requestConfigBuilder.setConnectionRequestTimeout(this.timeout);
             requestConfigBuilder.setSocketTimeout(this.timeout);
@@ -559,16 +517,16 @@ public final class HTTPRequest {
         // prepare request
         final HttpRequestBase request = method.request(uri);
         request.setConfig(requestConfig);
-        if ((this.userAgent != null) && !this.userAgent.isEmpty()) {
+        if((this.userAgent != null) && !this.userAgent.isEmpty()) {
             request.setHeader(WSConstants.HEADER_USER_AGENT, this.userAgent);
         }
-        for (final Entry<String, List<String>> entry : this.headers.entrySet()) {
+        for(final Entry<String, List<String>> entry : this.headers.entrySet()) {
             final List<String> list = entry.getValue();
-            for (final String string : list) {
+            for(final String string : list) {
                 request.addHeader(entry.getKey(), string);
             }
         }
-        if (request instanceof HttpEntityEnclosingRequestBase) {
+        if(request instanceof HttpEntityEnclosingRequestBase) {
             final HttpEntityEnclosingRequestBase entityBase = (HttpEntityEnclosingRequestBase) request;
             entityBase.setEntity(new StringEntity(this.body, "UTF-8"));
         }
@@ -579,21 +537,64 @@ public final class HTTPRequest {
     private URI buildURI() {
         try {
             String u = this.url;
-            for (final Entry<String, String> pathEntry : this.pathParams.entrySet()) {
+            for(final Entry<String, String> pathEntry : this.pathParams.entrySet()) {
                 u = u.replace("{" + pathEntry.getKey() + "}", pathEntry.getValue());
             }
             final URIBuilder builder = new URIBuilder(u);
             final Set<Entry<String, List<String>>> entrySet = this.queryParams.entrySet();
-            for (final Entry<String, List<String>> entry : entrySet) {
+            for(final Entry<String, List<String>> entry : entrySet) {
                 final List<String> list = entry.getValue();
-                for (final String string : list) {
+                for(final String string : list) {
                     builder.addParameter(entry.getKey(), string);
                 }
             }
             return builder.build();
-        } catch (final URISyntaxException e) {
+        } catch(final URISyntaxException e) {
             throw new RuntimeException("Invalid URI", e);
         }
+    }
+
+    public enum Method implements Request {
+        GET {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpGet(uri);
+            }
+        }, HEAD {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpHead(uri);
+            }
+        }, POST {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpPost(uri);
+            }
+        }, PUT {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpPut(uri);
+            }
+        }, DELETE {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpDelete(uri);
+            }
+        }, PATCH {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpPatch(uri);
+            }
+        }, OPTIONS {
+            @Override
+            public HttpRequestBase request(final URI uri) {
+                return new HttpOptions(uri);
+            }
+        }
+    }
+
+    interface Request {
+        HttpRequestBase request(URI uri);
     }
 
 }
