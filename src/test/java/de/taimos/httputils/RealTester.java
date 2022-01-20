@@ -159,7 +159,7 @@ public class RealTester {
     }
 
     private void assertOKWithBody(HTTPResponse response) {
-        Assert.assertEquals(response.getStatus(), 200);
+        Assert.assertEquals(200, response.getStatus());
         Assert.assertTrue(response.isStatusOK());
         final String body = response.getResponseAsString();
         Assert.assertNotNull(body);

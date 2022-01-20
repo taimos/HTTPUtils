@@ -15,7 +15,7 @@ public class HTTPResponse implements AutoCloseable {
     }
 
     public HttpResponse getResponse() {
-        return response;
+        return this.response;
     }
 
     /**
@@ -23,7 +23,7 @@ public class HTTPResponse implements AutoCloseable {
      */
     public String getResponseAsString() {
         try {
-            return EntityUtils.toString(response.getEntity(), "UTF-8");
+            return EntityUtils.toString(this.response.getEntity(), "UTF-8");
         } catch (final ParseException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,7 +34,7 @@ public class HTTPResponse implements AutoCloseable {
      */
     public byte[] getResponseAsBytes() {
         try {
-            return EntityUtils.toByteArray(response.getEntity());
+            return EntityUtils.toByteArray(this.response.getEntity());
         } catch (final ParseException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +44,7 @@ public class HTTPResponse implements AutoCloseable {
      * @return String
      */
     public int getStatus() {
-        return response.getStatusLine().getStatusCode();
+        return this.response.getStatusLine().getStatusCode();
     }
 
     /**

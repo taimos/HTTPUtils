@@ -11,9 +11,10 @@
     <description>Utility package for HTTP calls</description>
     <inceptionYear>2012</inceptionYear>
     <properties>
-        <httpclient.version>4.5.9</httpclient.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <wiremock.version>2.24.1</wiremock.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <wiremock.version>2.32.0</wiremock.version>
+        <junit.version>4.13.1</junit.version>
     </properties>
     <dependencies>
         <dependency>
@@ -34,8 +35,14 @@
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
+            <artifactId>wiremock-jre8</artifactId>
             <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
