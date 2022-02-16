@@ -55,7 +55,7 @@ public interface WaitStrategy {
      * @return Milliseconds to sleep
      */
     static WaitStrategy constant() {
-        return constant(1000);
+        return WaitStrategy.constant(1000);
     }
 
     /**
@@ -72,6 +72,6 @@ public interface WaitStrategy {
      * @return Milliseconds to sleep
      */
     static WaitStrategy linear() {
-        return linear(1000);
+        return WaitStrategy.linear(1000);
     }
 }

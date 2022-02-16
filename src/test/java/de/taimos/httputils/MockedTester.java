@@ -20,18 +20,17 @@ package de.taimos.httputils;
  * #L%
  */
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 /**
  * @author thoeger
@@ -41,7 +40,7 @@ public class MockedTester {
     private static final int PORT = 8888;
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().port(PORT).bindAddress("localhost"));
+    public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().port(MockedTester.PORT).bindAddress("localhost"));
 
     @Test
     public void retrySuccess() {
@@ -56,7 +55,7 @@ public class MockedTester {
                 .willReturn(aResponse().withStatus(201))
                 .willSetStateTo("done")
         );
-        final HTTPRequest request = WS.url("http://localhost:" + PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100));
+        final HTTPRequest request = WS.url("http://localhost:" + MockedTester.PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100));
         try (final HTTPResponse response = request.get()) {
             Assert.assertEquals(201, response.getStatus());
         }
@@ -75,7 +74,7 @@ public class MockedTester {
                 .willReturn(aResponse().withStatus(500))
                 .willSetStateTo("done")
         );
-        try (final HTTPResponse ignored = WS.url("http://localhost:" + PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100)).get()) {
+        try (final HTTPResponse ignored = WS.url("http://localhost:" + MockedTester.PORT + "/" + scenario).retry(1, Retryable.standard(), WaitStrategy.constant(100)).get()) {
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals("retry exhausted", e.getMessage());
