@@ -1,0 +1,9 @@
+tasks:
+  - init: mvn clean install -DskipTests=false
+vscode:
+  extensions:
+    - redhat.java
+    - vscjava.vscode-java-debug
+    - vscjava.vscode-maven
+image:
+  file: .gitpod.Dockerfile
