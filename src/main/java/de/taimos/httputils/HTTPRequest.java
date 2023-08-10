@@ -21,6 +21,7 @@ package de.taimos.httputils;
  */
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
@@ -68,6 +69,7 @@ public final class HTTPRequest {
 
     private final Map<String, String> pathParams = new ConcurrentHashMap<>();
 
+    private volatile HttpHost proxy;
     private volatile Integer timeout;
 
     private volatile boolean followRedirect = true;
@@ -129,6 +131,16 @@ public final class HTTPRequest {
      */
     public HTTPRequest pathParam(final String name, final String value) {
         this.pathParams.put(name, value);
+        return this;
+    }
+
+    /**
+     * @param proxyHost the proxy hostname
+     * @param proxyPort the proxy port
+     * @return this
+     */
+    public HTTPRequest proxy(String proxyHost, int proxyPort) {
+        this.proxy = new HttpHost(proxyHost, proxyPort);
         return this;
     }
 
@@ -512,6 +524,9 @@ public final class HTTPRequest {
             requestConfigBuilder.setSocketTimeout(this.timeout);
         }
         requestConfigBuilder.setRedirectsEnabled(this.followRedirect);
+        if (this.proxy != null) {
+            requestConfigBuilder.setProxy(this.proxy);
+        }
         final RequestConfig requestConfig = requestConfigBuilder.build();
 
         // prepare request
